@@ -1,0 +1,139 @@
+% !TXS template
+\documentclass[french]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper]{geometry}
+\usepackage{babel}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.9,0.9,0.9}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+    linewidth=12cm,
+    xleftmargin=.1\textwidth,
+    backgroundcolor=\color{mygray},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+    basicstyle=\tiny\ttfamily,        % the size of the fonts that are used for the code
+    breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+    breaklines=true,                 % sets automatic line breaking
+    captionpos=b,                    % sets the caption-position to bottom
+    commentstyle=\color{mygreen},    % comment style
+    deletekeywords={...},            % if you want to delete keywords from the given language
+    escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+    extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+    firstnumber= 0,                % start line enumeration with line 0
+    frame=single,	                   % adds a frame around the code
+    keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+    keywordstyle=\color{blue},       % keyword style
+    language=Python,                 % the language of the code
+    morekeywords={*,...},            % if you want to add more keywords to the set
+    numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+    numbersep=5pt,                   % how far the line-numbers are from the code
+    numberstyle=\tiny, % the style that is used for the line-numbers
+    rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+    showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+    showstringspaces=false,          % underline spaces within strings only
+    showtabs=false,                  % show tabs within strings adding particular underscores
+    stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+    stringstyle=\color{mymauve},     % string literal style
+    tabsize=2,	                   % sets default tabsize to 2 spaces
+    title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+\begin{document}
+
+\section*{Exercice 1}
+
+\section*{Exercice 2}
+\paragraph{a.}  
+\begin{center}
+\begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
+    def first_test(n):
+        for a in range(2, int(ma.sqrt(n) + 1)):
+            if n % a == 0:
+                return False
+        return True
+\end{lstlisting}
+\end{center}
+\paragraph{b.} En considérant que la divison euclidienne à une complexité en $O(1)$, le test naïf de primalité a une complexité en $O(\sqrt{n})$
+\paragraph{c.} On compte ainsi 9680 nombres premiers inférieurs à $10^5$
+
+\paragraph{d.} \
+\begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
+def gen_carmichael(t):
+    res = []
+    for x in range(3, int(t), 2):  # les nombres de Carmichael sont impairs
+        valid = False
+        for y in range(2, x):
+            if ma.gcd(x, y) == 1:
+                if pow(y, x-1, x) != 1:
+                    valid = False
+                    break
+            else:
+                valid = True
+        if valid:
+            res.append(x)
+    return res
+\end{lstlisting}
+
+\paragraph{e.} \
+\begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
+    def gen_carmichael_3(k):
+    prime = []
+    for n in range(3, 2 ** k, 2):
+        if first_test(n):
+            prime.append(n)
+    res = []
+    for i_a, a in enumerate(prime):
+        for i_b, b in enumerate(prime[:i_a]):
+            ab = a * b
+                for c in prime[:i_b]:
+                # on  a obtenu 3 premiers, on teste si leur produit est Carmichael
+                tst = ab * c - 1
+                if ma.ceil(ma.log2(tst)) != k:
+                    continue
+                if tst % 2 == 0 and tst % (a - 1) == 0 and tst % (b - 1) == 0 
+                   and tst % (c - 1) == 0 and a % (b * c) != 0:
+                    res.append(tst + 1)
+    return sorted(res)
+\end{lstlisting}
+\paragraph{f.} TODO
+\paragraph{g.}\subparagraph{1} Soit n un nombre de Carmichael de la forme pqr avec p < q < r trois nombres premiers. D'après le critère de Korselt on a :\\
+$\exists \:\lambda \in \mathbb{N}$ tel que :
+\begin{align*}
+    \lambda(r-1)&=n-1\\
+    \lambda(r-1)&=pqr-1\\
+    \lambda(r-1)&=pq(r-1)+pq-1\\
+    (r-1)(\lambda-pq)&=pq-1
+\end{align*}
+Soit $h := \lambda - pq$ on a :\\
+ - $h \ne 1$ car cela impliquerait $pq=r$ et n'aurait un facteur carré (contraire au critère de Korselt).\\
+ - Puisque $r-1>q$ on a $hq<pq$ donc $h<p$ et plus précisement $h \leq p-1$.\\
+D'où : $h \in [\![2; p-1]\!]$
+\subparagraph{2} De la même manière on peut montrer : $\exists \:k \in [\![p+1; r-1]\!], \: k(q-1)=pr-1$
+\begin{align*}
+    h(r-1)&=pq-1\\h(r-1)&=p(q-1)+p-1\\h(pr -1 +1 -p)&=p(p(q-1)+p-1)\\
+    h(k(q-1) +1 -p)&=p^2(q-1)+p(p-1)\\
+    hk(q-1)+h(1-p)&=p^2(q-1)p(p-1)\\
+    (p^2+hk)(q-1)&=(h+p)(p-1)
+\end{align*}
+\subparagraph{3} TODO
+\paragraph{h.}  \*\\ Pour p = 3 on obtient : 561 \\ Pour p = 5 on obtient : 1105, 2465, 10585
+\section*{Exercice 3}
+\paragraph{a.} \
+\begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
+    def test_fermat(n, a=0):
+        if not a:
+            a = rd.randint(2, 100)
+
+        if pow(a, n - 1, n) != 1:
+            return False
+        return True
+\end{lstlisting}
+
+\end{document}
