@@ -9,12 +9,14 @@
 \usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{graphicx}
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.9,0.9,0.9}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 
 \lstset{
+    literate= {≡}{{$\equiv$}}1,
     linewidth=12cm,
     xleftmargin=.1\textwidth,
     backgroundcolor=\color{mygray},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
@@ -44,11 +46,64 @@
     tabsize=2,	                   % sets default tabsize to 2 spaces
     title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
-
+\author{
+    DE MATOS Kevin\\
+    \and
+    LEWANDOWSKI Basile\\
+}
+\title{COMPLEX - Projet}
 \begin{document}
-
+\maketitle
 \section*{Exercice 1}
+\paragraph{a.} Calcul du pgcd selon l'algorithme d'Euclide :
+Pour chaque itération, on effectue "a mod b"\\
+ - Si le résultat est différent de 0, "a" prend la valeur "b" et "b" la valeur "a mod b"\\
+ - Si le résultat est égal à 0, on retourne la valeur de "b" correspondant au pgcd(a,b)
+ \begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
+def my_gcd(a,b): 
+     while(a%b != 0) : 
+        a, b = b, a%b 
+     return b
+\end{lstlisting}
+\paragraph{b.}Calcul de l’inverse du modulo N de a selon l'algorithme d’Euclide étendu:\\
+Utilisation de l'identité de Bézout avec ab + Nc = PGCD(a, N)\\
+Initialisation avec une matrice identité pour les valeurs de b,b1,c,c1\\
+Retourne un entier b tel que a*b $\equiv$ 1 mod N ssi pgcd(a,N) = 1\\
+\begin{lstlisting}[language=Python]
+def my_inverse(a,N):
+    b,b1 = 1,0
+    c,c1 = 0,1
+    while N!=0:
+        temp_quotient, temp_reste = a//N, a%N 
+        a, N = N, temp_reste
+        b, b1 = b1, (b - temp_quotient*b1)
+        c, c1 = c1, (c - temp_quotient*c1)
 
+    # a => pgcd(a,N)
+    # b => a*b ≡ pgcd(a,N) mod N
+    # c => N*c ≡ pgcd(a,N) mod a
+
+    if a!=1:
+        raise ValueError("a n'est pas inversible modulo N!")
+    else:
+        return b
+\end{lstlisting} 
+\newpage 
+\paragraph{c.} \*\\
+\begin{center}
+\includegraphics[width=.5\textwidth]{complex.png}
+\end{center}
+\paragraph{d.} \
+\begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
+def my_expo_mod(g,n,N):
+    l = n.bit_length()
+    h = 1
+    for i in range(l,-1,-1):
+        h = (h*h)%N
+        if((n & (2**i)) == 2**i):
+            h = (h*g)%N
+    return h
+\end{lstlisting}
 \section*{Exercice 2}
 \paragraph{a.}  
 \begin{center}
@@ -60,8 +115,8 @@
         return True
 \end{lstlisting}
 \end{center}
-\paragraph{b.} En considérant que la divison euclidienne à une complexité en $O(1)$, le test naïf de primalité a une complexité en $O(\sqrt{n})$
-\paragraph{c.} On compte ainsi 9680 nombres premiers inférieurs à $10^5$
+\paragraph{b.} En considérant que la divison euclidienne a une complexité arithmétique en $O(1)$, le test naïf de primalité à une complexité en $O(\sqrt{n})$.
+\paragraph{c.} On compte ainsi 9680 nombres premiers inférieurs à $10^5$.
 
 \paragraph{d.} \
 \begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
@@ -102,7 +157,17 @@ def gen_carmichael_3(k):
                     res.append(tst + 1)
     return sorted(res)
 \end{lstlisting}
-\paragraph{f.} TODO
+\paragraph{f.} On compare le nombre de Carmichael maximal obtenu par plusieurs algorithmes :\\
+\begin{center}
+    
+    \begin{tabular}{lll}
+        Algorithme naïf :&63973 en 287s\\
+        Algorithme naïf multithreadé : & 115 921 en 317s\\
+        Algorithme basé sur le critère de Korselt : &1 196 508 858 409 en 302s\\
+    \end{tabular}
+    
+\end{center}
+L'algorithme \verb*|gen_carmichael_3| est donc significativement plus efficace. Cependant, il ne retourne pas tous les nombres de Carmichael puisqu'il ne s'intéresse qu'à ceux qui se décomposent en 3 facteurs premiers. Dans cet exemple, il y a 8314 nombres inférieurs au maximum (la majorité) qui n'ont pas été pris en compte.
 \paragraph{g.}\subparagraph{1} Soit n un nombre de Carmichael de la forme pqr avec p < q < r trois nombres premiers. D'après le critère de Korselt on a :\\
 $\exists \:\lambda \in \mathbb{N}$ tel que :
 \begin{align*}
@@ -122,7 +187,9 @@ D'où : $h \in [\![2; p-1]\!]$
     hk(q-1)+h(1-p)&=p^2(q-1)p(p-1)\\
     (p^2+hk)(q-1)&=(h+p)(p-1)
 \end{align*}
-\subparagraph{3} TODO
+\subparagraph{3} Ainsi, on a montré que l'on pouvait exprimer q-1 en fonction de p, h et k. On peut également observer d'après (1) qu'on a : $r \leq \frac{1}{2}(pq + 1)$, ce qui nous permet de montrer que les diviseurs premiers de n sont bornés proportionellement à p.\\
+En effet, soit $p \in \mathbb{N}$, on a : $q - 1 \leq (2p - 1)(p-1)$ donc $q\leq 2(p^2 + 1)$ \\ D'où $r \leq p(p^2 + 1) + \frac{1}{2}$ ce qui montre que r est borné, c'est à dire qu'il n'existe qu'un nombre fini de nombres de
+Carmichael de la forme $p*q*r$ pour p fixé.
 \paragraph{h.}  \*\\ Pour p = 3 on obtient : 561 \\ Pour p = 5 on obtient : 1105, 2465, 10585
 \section*{Exercice 3}
 \paragraph{a.} \
@@ -168,6 +235,7 @@ def test_miller_rabin(n, k=3):
             return False
     return True
 \end{lstlisting}
+\newpage 
 \paragraph{c.} Probabilités empiriques d'erreurs sur  \verb|test_miller_rabin| avec une précision T= 3 pour des entiers inférieurs à $10^5$ sur des échantillons de tailles $10^7$ :\\
 \begin{center}
     
@@ -178,7 +246,7 @@ def test_miller_rabin(n, k=3):
     \end{tabular}
     
 \end{center}
-Le nombre d'erreur (18 pour 10 millions de tests en nombres aléatoires) n'est pas suffisamment significatif pour conclure.
+Le nombre d'erreur (18 pour 10 millions de tests en nombres aléatoires) n'est pas suffisamment significatif pour conclure quant à l'impact de la primalité des nombres testés sur l'algorithme ; on peut néanmoins remarquer qu'il est plus fiable que l'algorithme du test de Fermat de l'exercice précédent.
 \paragraph{d.} \
 \begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
 def gen_rsa(t):

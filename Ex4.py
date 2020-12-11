@@ -15,7 +15,7 @@ N = 100000  # taille des échantillons de test
 
 
 def gen_rsa(t):
-    """génère 2 nombre positifs au test de Miller-Rabin sur l'intervalle [2^t-1; 2^t["""
+    """génère le produit de 2 nombre positifs au test de Miller-Rabin sur l'intervalle [2^t-1; 2^t["""
     res = []
     for n in range(2 ** (t - 1), 2 ** t):
         if test_miller_rabin(n):

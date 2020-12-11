@@ -1,8 +1,6 @@
 import math as ma
 import multiprocessing as mp
 import time
-import matplotlib.pyplot as plt
-import random as rd
 
 
 def first_test(n):
@@ -69,7 +67,7 @@ def gen_carmichael_mp(t):
 
 
 def gen_carmichael_3(k):
-    """ genère les nombres de Carmicheal de longueru binaire k à partir de trois diviseurs premiers
+    """ genère les nombres de Carmicheal de longueur binaire k à partir de trois diviseurs premiers
     k : un entier
     """
     # t = int(t)
@@ -85,7 +83,7 @@ def gen_carmichael_3(k):
                 # on  a obtenu 3 premiers, on teste si leur produit est Carmichael
                 # worker_proc(a * b * c)
                 tst = ab * c - 1
-                if ma.ceil(ma.log2(tst)) != k:
+                if tst.bit_length() != k:
                     continue
                 if tst % 2 == 0 and tst % (a - 1) == 0 and tst % (b - 1) == 0 and tst % (c - 1) == 0 and a % (b * c) != 0:
                     res.append(tst + 1)
@@ -111,10 +109,6 @@ def gen_carmichael_3_all(t):
                     res.append(tst + 1)
     return sorted(res)
 
-# pi(1e5) = 9680
-# gen_carmicheal(1e5) = [561, 1105, 1729, 2465, 2821, 6601, 8911, 10585, 15841, 29341, 41041, 46657, 52633, 62745,
-# 63973, 75361]
-
 
 def gen_carmichael_2(p):
     """retourne tous les nombre de carmichael de la forme pqr pour un p donné"""
@@ -135,12 +129,13 @@ def gen_carmichael_2(p):
 
 if __name__ == '__main__':
     t = time.time()
-    print(len(gen_carmichael(1e4)))
+    gen_carmichael_mp(10000)
+    print("mt : ", str(time.time() - t))
+    t = time.time()
+    print(gen_carmichael(64000))
     print("naif : ", str(time.time() - t))
     t = time.time()
-    print(len(gen_carmichael_3_all(1e5)))
+    print(gen_carmichael_3_all(100))
     print("3 : ", str(time.time() - t))
-    t = time.time()
-    gen_carmichael_mp(1e5)
-    print("mt : ", str(time.time() - t))
+
 
