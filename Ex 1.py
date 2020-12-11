@@ -42,8 +42,9 @@ def my_inverse(a,N):
 #1.c
 #Détermination expérimentalement de la complexité des fonctions
 #Utilisation de la fonction time() pour le calcul et de matplotlib pour l'affichage du graphe
-#les valeurs testées sont les puissance de 89 et 97 (2 nombres premier) pour s'assurer que le pgcd soit égale à 1
+#les valeurs testées sont les puissances de 89 et 97 (2 nombres premiers) pour s'assurer que le pgcd soit égale à 1
 
+import time
 import matplotlib.pyplot as plt
 
 complexity1 = []
@@ -62,3 +63,19 @@ plt.plot(complexity1,label="my_gcd()")
 plt.plot(complexity2,label="my_inverse()")
 plt.legend()
 plt.show()
+
+#1.d
+#Utilisation du pseudocode donné dans l'exercice avec "a_i" correspondant à "n & (2**i)"
+
+def my_expo_mod(g,n,N):
+    
+    l = n.bit_length()
+    h = 1
+    
+    for i in range(l,-1,-1):
+        h = (h*h)%N
+
+        if((n & (2**i)) == 2**i):
+            h = (h*g)%N
+            
+    return h
