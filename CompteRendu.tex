@@ -90,8 +90,29 @@ def my_inverse(a,N):
 \end{lstlisting} 
 \newpage 
 \paragraph{c.} \*\\
+\begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
+    import time
+    import matplotlib.pyplot as plt
+    
+    complexity1 = []
+    complexity2 = []
+    
+    for i in range (1,3000):
+        start1=time.time()
+        temp1 = my_gcd(89**i,97**i)
+        complexity1.append(time.time()-start1)
+    
+        start2=time.time()
+        temp2 = my_inverse(89**i,97**i)
+        complexity2.append(time.time()-start2)
+    
+    plt.plot(complexity1,label="my_gcd()")
+    plt.plot(complexity2,label="my_inverse()")
+    plt.legend()
+    plt.show()
+\end{lstlisting}
 \begin{center}
-\includegraphics[width=.5\textwidth]{complex.png}
+\includegraphics[width=.6\textwidth]{complex.png}
 \end{center}
 \paragraph{d.} \
 \begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
@@ -212,6 +233,7 @@ Carmichael de la forme $p*q*r$ pour p fixé.
 \end{tabular}
 
 \end{center}
+\newpage
 \section*{Exercice 4}
 \paragraph{a.} \
 \begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
@@ -234,8 +256,7 @@ def test_miller_rabin(n, k=3):
         if b != n - 1:
             return False
     return True
-\end{lstlisting}
-\newpage 
+\end{lstlisting} 
 \paragraph{c.} Probabilités empiriques d'erreurs sur  \verb|test_miller_rabin| avec une précision T= 3 pour des entiers inférieurs à $10^5$ sur des échantillons de tailles $10^7$ :\\
 \begin{center}
     
