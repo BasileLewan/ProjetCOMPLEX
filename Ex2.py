@@ -1,6 +1,8 @@
 import math as ma
 import multiprocessing as mp
 import time
+import matplotlib.pyplot as plt
+import random as rd
 
 
 def first_test(n):
@@ -90,35 +92,24 @@ def gen_carmichael_3(k):
     return sorted(res)
 
 
-def gen_carmicheal_3_mp(t):
+def gen_carmichael_3_all(t):
     """ genère un nombre de Carmicheal inférieur t à partir de trois diviseurs premiers
-    version partiellement multiprocess
+    version sans contrainte de taille
     """
     t = int(t)
     prime = []
     for n in range(3, t, 2):
         if first_test(n):
             prime.append(n)
-
-    Q = mp.Queue()
-    pool = mp.Pool(processes=mp.cpu_count())
-    pool.map(worker_proc_3, Q)
-
+    res = []
     for i_a, a in enumerate(prime):
         for i_b, b in enumerate(prime[:i_a]):
+            ab = a * b
             for c in prime[:i_b]:
-                # on  a obtenu 3 premiers, on test si leur produit est Carmichael
-                Q.put((a, b, c))
-
-    pool.terminate()
-
-
-def worker_proc_3(q):
-    while True:
-        a, b, c = q.get()
-        tst = a * b * c - 1
-        if tst % 2 == 0 and tst % (a - 1) == 0 and tst % (b - 1) == 0 and tst % (c - 1) == 0 and a % (b * c) != 0:
-            print(tst + 1)
+                tst = ab * c - 1
+                if tst % 2 == 0 and tst % (a - 1) == 0 and tst % (b - 1) == 0 and tst % (c - 1) == 0 and a % (b * c) != 0:
+                    res.append(tst + 1)
+    return sorted(res)
 
 # pi(1e5) = 9680
 # gen_carmicheal(1e5) = [561, 1105, 1729, 2465, 2821, 6601, 8911, 10585, 15841, 29341, 41041, 46657, 52633, 62745,
@@ -141,13 +132,15 @@ def gen_carmichael_2(p):
                 res.append(tst + 1)
     return sorted(res)
 
-print(gen_carmichael_2(5))
 
 if __name__ == '__main__':
     t = time.time()
-    print(gen_carmichael_3(13))
-    # print(gen_carmicheal_3(1e3))
-    # print("std : ", str(time.time() - t))
-    # t = time.time()
-    # gen_carmicheal_mp(1e4)
-    # print("mt : ", str(time.time() - t))
+    print(len(gen_carmichael(1e4)))
+    print("naif : ", str(time.time() - t))
+    t = time.time()
+    print(len(gen_carmichael_3_all(1e5)))
+    print("3 : ", str(time.time() - t))
+    t = time.time()
+    gen_carmichael_mp(1e5)
+    print("mt : ", str(time.time() - t))
+

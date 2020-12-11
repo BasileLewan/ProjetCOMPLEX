@@ -6,7 +6,7 @@ N = 100000  # taille des échantillons de test
 
 def test_fermat(n, a=0):
     if not a:
-        a = rd.randint(2, 100)
+        a = rd.randint(2, 128)
 
     if pow(a, n - 1, n) != 1:
         return False
@@ -31,8 +31,10 @@ print(" - nombres Carmichael : ", err / len(tst))
 
 err = 0
 for _ in range(N):
-    a, b = rd.randint(2, 100), rd.randint(2, 100)
-    if test_fermat(a * b) != first_test(a * b):
+    n = rd.randint(2, 100000)
+    while first_test(n):
+        n = rd.randint(2, 100000)
+    if test_fermat(n) != first_test(n):
         err += 1
 
 print(" - nombres composés : ", err / N)
@@ -41,7 +43,7 @@ print(" - nombres composés : ", err / N)
 
 err = 0
 for _ in range(N):
-    n = rd.randint(2, 10000)
+    n = rd.randint(2, 100000)
     if test_fermat(n) != first_test(n):
         err += 1
 

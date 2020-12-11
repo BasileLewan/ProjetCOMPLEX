@@ -83,7 +83,7 @@ def gen_carmichael(t):
 
 \paragraph{e.} \
 \begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
-    def gen_carmichael_3(k):
+def gen_carmichael_3(k):
     prime = []
     for n in range(3, 2 ** k, 2):
         if first_test(n):
@@ -135,5 +135,61 @@ D'où : $h \in [\![2; p-1]\!]$
             return False
         return True
 \end{lstlisting}
+\paragraph{c.} Probabilités empiriques d'erreurs sur  \verb|test_fermat| avec une base aléatoire pour des entiers inférieurs à $10^5$ sur des échantillons de tailles $10^5$ :\\
+\begin{center}
 
+\begin{tabular}{lll}
+    Nombres de Carmichael :&0.9375\\
+    Nombres Composés : & 0.00161\\
+    Nombres aléatoires : &0.00132\\
+\end{tabular}
+
+\end{center}
+\section*{Exercice 4}
+\paragraph{a.} \
+\begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
+def test_miller_rabin(n, k=3):
+    h, m = 0, n - 1
+    while m % 2 == 0:
+        h += 1
+        m //= 2
+    for _ in range(k):
+        a = random.randrange(2, n - 1)
+        b = pow(a, m, n)
+        if b == 1 or b == n - 1:
+            continue
+        for _ in range(h - 1):
+            if b != n-1 and pow(b, 2, n) == 1:
+                return False
+            if b == n - 1:
+                break
+            b = pow(b, 2, n)
+        if b != n - 1:
+            return False
+    return True
+\end{lstlisting}
+\paragraph{c.} Probabilités empiriques d'erreurs sur  \verb|test_miller_rabin| avec une précision T= 3 pour des entiers inférieurs à $10^5$ sur des échantillons de tailles $10^7$ :\\
+\begin{center}
+    
+    \begin{tabular}{lll}
+        Nombres de Carmichael :&0.0008469\\
+        Nombres Composés : & 0.0000029\\
+        Nombres aléatoires : &0.0000018\\
+    \end{tabular}
+    
+\end{center}
+Le nombre d'erreur (18 pour 10 millions de tests en nombres aléatoires) n'est pas suffisamment significatif pour conclure.
+\paragraph{d.} \
+\begin{lstlisting}[language=Python, belowskip=-1 \baselineskip]
+def gen_rsa(t):
+    res = []
+    for n in range(2 ** (t - 1), 2 ** t):
+        if test_miller_rabin(n):
+            res.append(n)
+            if len(res) == 2:
+                break
+    if len(res) < 2:
+        raise ValueError("Intervalle trop court")
+    return res[0] * res[1]
+\end{lstlisting}
 \end{document}
